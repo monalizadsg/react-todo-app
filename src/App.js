@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import TextInput from "./TextInput";
 import TodoList from "./TodoList";
+import DeleteButton from "./DeleteButton";
 
 class App extends Component {
   constructor() {
@@ -15,10 +16,9 @@ class App extends Component {
 
   componentDidMount() {
     //check if key exist in localStorage
-    const todoItems = JSON.parse(localStorage.getItem("todos"));
-    if (!todoItems) {
-      this.setState({ todoItems: [] });
-    } else {
+    let todoItems = localStorage.getItem("todos");
+    if (todoItems) {
+      todoItems = JSON.parse(todoItems);
       this.setState({ todoItems }, () => console.log(this.state.todoItems));
     }
   }
@@ -46,7 +46,6 @@ class App extends Component {
 
     //store todos in local storage
     localStorage.setItem("todos", JSON.stringify(todos));
-    localStorage.setItem("todo", "");
   };
 
   handleDelete = (id) => {
@@ -96,8 +95,8 @@ class App extends Component {
           checked={isCompleted}
           onChange={this.handleInputChange}
           onDelete={this.handleDelete}
-          onDeleteAllItems={this.handleDeleteAllItems}
         />
+        <DeleteButton onDelete={this.handleDeleteAllItems} />
       </div>
     );
   }

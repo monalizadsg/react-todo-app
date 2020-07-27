@@ -1,13 +1,7 @@
 import React from "react";
 import Todo from "./Todo";
 
-const TodoList = ({
-  todoItems,
-  checked,
-  onChange,
-  onDelete,
-  onDeleteAllItems,
-}) => {
+const TodoList = ({ todoItems, checked, onChange, onDelete }) => {
   return (
     <div>
       {todoItems.map((todo, index) => (
@@ -18,7 +12,6 @@ const TodoList = ({
             onChange={onChange}
             onDelete={() => onDelete(todo.id)}
           />
-          <button onClick={onDeleteAllItems}>Delete All</button>
         </li>
       ))}
     </div>
