@@ -1,18 +1,20 @@
 import React from "react";
+import DeleteButton from "./DeleteButton";
+import CheckBox from "./CheckBox";
 
-const Todo = ({ item, checked, onChange, onDelete }) => {
+const Todo = ({ todo, checked, changeStatus, onDelete }) => {
+  const handleChange = (checked) => {
+    changeStatus(todo.id, checked);
+  };
+  const className =
+    "list-todo " + (todo.isCompleted === true ? "completed" : "pending");
   return (
-    <div className="list-item">
-      <input
-        name="isCompleted"
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-      />
-      {item}
-      <button onClick={onDelete}>
-        <i className="fas fa-trash"></i>
-      </button>
+    <div className={className}>
+      <div>
+        <CheckBox checked={todo.isCompleted} onChange={handleChange} />
+        {todo.item}
+      </div>
+      {todo.isCompleted && <DeleteButton onDelete={onDelete} />}
     </div>
   );
 };

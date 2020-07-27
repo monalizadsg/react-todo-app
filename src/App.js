@@ -3,6 +3,7 @@ import "./App.css";
 import TextInput from "./TextInput";
 import TodoList from "./TodoList";
 import DeleteButton from "./DeleteButton";
+import StatusTab from "./StatusTab";
 
 class App extends Component {
   constructor() {
@@ -11,11 +12,11 @@ class App extends Component {
       todo: "",
       todoItems: [],
       isCompleted: false,
+      currentTab: "active",
     };
   }
 
   componentDidMount() {
-    //check if key exist in localStorage
     let todoItems = localStorage.getItem("todos");
     if (todoItems) {
       todoItems = JSON.parse(todoItems);
@@ -32,7 +33,7 @@ class App extends Component {
     }
 
     const todoItem = {
-      id: todoItems.length + 1,
+      id: Date.now(),
       item: todo,
       isCompleted: false,
     };
@@ -49,15 +50,17 @@ class App extends Component {
   };
 
   handleDelete = (id) => {
-    const { todoItems } = this.state;
-    const updatedTodos = todoItems.filter((todo) => todo.id !== id);
+    const todoItems = [...this.state.todoItems];
+    const index = todoItems.findIndex((todo) => todo.id === id);
+    todoItems.splice(index, 1);
+    console.log(todoItems);
 
     this.setState({
-      todoItems: updatedTodos,
+      todoItems,
     });
 
     //update localStorage
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    localStorage.setItem("todos", JSON.stringify(todoItems));
   };
 
   handleDeleteAllItems = () => {
@@ -76,8 +79,26 @@ class App extends Component {
     // console.log(e.target.value);
     const target = e.target;
     const name = target.name;
-    const value = target.type === "checkbox" ? target.checked : target.value;
+    const value = target.value;
     this.setState({ [name]: value });
+  };
+
+  handleStatusChange = (id, checked) => {
+    console.log(checked);
+    const todoItems = [...this.state.todoItems];
+    const item = todoItems.find((todo) => todo.id === id);
+    // console.log(item);
+    checked = !this.state.isCompleted;
+    item.isCompleted = checked;
+
+    this.setState({ isCompleted: checked, todoItems });
+    console.log(checked);
+    console.log(item);
+    console.log(todoItems);
+  };
+
+  handleStatusTabs = (e) => {
+    console.log(e);
   };
 
   render() {
@@ -85,6 +106,7 @@ class App extends Component {
     return (
       <div className="App">
         <h1>#todo</h1>
+        <StatusTab displayAll={this.handleStatusTabs} />
         <TextInput
           onSubmit={this.handleSubmit}
           todo={todo}
@@ -93,10 +115,13 @@ class App extends Component {
         <TodoList
           todoItems={todoItems}
           checked={isCompleted}
-          onChange={this.handleInputChange}
+          changeStatus={this.handleStatusChange}
           onDelete={this.handleDelete}
         />
-        <DeleteButton onDelete={this.handleDeleteAllItems} />
+        <DeleteButton
+          className="delete-all-btn"
+          onDelete={this.handleDeleteAllItems}
+        />
       </div>
     );
   }
